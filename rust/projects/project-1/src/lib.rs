@@ -1,6 +1,6 @@
-#![deny(missing_docs)]
-//! A simple key/value store.
-
+#[deny(missing_docs)]
 pub use kv::KvStore;
+extern crate structopt;
 
+/// Missing doc
 mod kv;

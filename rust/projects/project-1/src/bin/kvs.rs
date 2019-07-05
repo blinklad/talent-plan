@@ -1,49 +1,43 @@
-use clap::{App, AppSettings, Arg, SubCommand};
-use std::process::exit;
+extern crate structopt;
+use structopt::StructOpt;
+
+#[derive(StructOpt)]
+#[structopt(name = "kvs", about = "Key value storage")]
+struct Cli {
+    #[structopt(subcommand)]
+    cmd: Command,
+}
+
+#[derive(StructOpt)]
+enum Command {
+    #[structopt(name = "set")]
+    /// Set and modify key:value pairings
+    Set { key: String, val: String },
+
+    #[structopt(name = "get")]
+    /// Access stored key:value pairings
+    Get { key: String },
+
+    #[structopt(name = "rm")]
+    /// Remove stored key:value pairings
+    Remove { key: String },
+}
 
 fn main() {
-    let matches = App::new(env!("CARGO_PKG_NAME"))
-        .version(env!("CARGO_PKG_VERSION"))
-        .author(env!("CARGO_PKG_AUTHORS"))
-        .about(env!("CARGO_PKG_DESCRIPTION"))
-        .setting(AppSettings::DisableHelpSubcommand)
-        .setting(AppSettings::SubcommandRequiredElseHelp)
-        .setting(AppSettings::VersionlessSubcommands)
-        .subcommand(
-            SubCommand::with_name("set")
-                .about("Set the value of a string key to a string")
-                .arg(Arg::with_name("KEY").help("A string key").required(true))
-                .arg(
-                    Arg::with_name("VALUE")
-                        .help("The string value of the key")
-                        .required(true),
-                ),
-        )
-        .subcommand(
-            SubCommand::with_name("get")
-                .about("Get the string value of a given string key")
-                .arg(Arg::with_name("KEY").help("A string key").required(true)),
-        )
-        .subcommand(
-            SubCommand::with_name("rm")
-                .about("Remove a given key")
-                .arg(Arg::with_name("KEY").help("A string key").required(true)),
-        )
-        .get_matches();
+    let app = Cli::from_args();
 
-    match matches.subcommand() {
-        ("set", Some(_matches)) => {
+    match app.cmd {
+        set => {
             eprintln!("unimplemented");
-            exit(1);
+            panic!()
         }
-        ("get", Some(_matches)) => {
+        get => {
             eprintln!("unimplemented");
-            exit(1);
+            panic!();
         }
-        ("rm", Some(_matches)) => {
+        remove => {
             eprintln!("unimplemented");
-            exit(1);
+            panic!();
         }
-        _ => unreachable!(),
-    }
+    };
 }

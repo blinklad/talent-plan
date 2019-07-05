@@ -1,46 +1,55 @@
 use std::collections::HashMap;
 
-/// The `KvStore` stores string key/value pairs.
-///
-/// Key/value pairs are stored in a `HashMap` in memory and not persisted to disk.
-///
-/// Example:
-///
+#[derive(Eq, PartialEq, Debug, Default)]
+/// Container for key:value pairings, where key and value are both Strings.
 /// ```rust
+/// # use std::error::Error;
+/// # use std::collections::HashMap;
 /// # use kvs::KvStore;
-/// let mut store = KvStore::new();
-/// store.set("key".to_owned(), "value".to_owned());
-/// let val = store.get("key".to_owned());
-/// assert_eq!(val, Some("value".to_owned()));
+/// # fn main() {
+/// let mut my_kvs = KvStore::new();
+/// let key1 = "key1".to_string();
+/// let key2 = "key2".to_string();
+/// let value1 = "value1".to_string();
+///
+/// my_kvs.set(key1.clone(), value1.clone());
+/// assert_eq!(my_kvs.get(key1.clone()).unwrap(), value1);
+/// assert_eq!(my_kvs.get(key2.clone()), None);
+///
+/// my_kvs.remove(key1.clone());
+/// assert_eq!(my_kvs.get(key1.clone()), None);
+/// #
+/// # }
 /// ```
 pub struct KvStore {
-    map: HashMap<String, String>,
+    store: HashMap<String, String>,
 }
 
 impl KvStore {
-    /// Creates a `KvStore`.
-    pub fn new() -> KvStore {
+    /// Constructor for owned KvStore.
+    pub fn new() -> Self {
         KvStore {
-            map: HashMap::new(),
+            store: HashMap::new(),
         }
     }
 
-    /// Sets the value of a string key to a string.
-    ///
-    /// If the key already exists, the previous value will be overwritten.
-    pub fn set(&mut self, key: String, value: String) {
-        self.map.insert(key, value);
+    /// Accessor for a KvStore's, given a pairing key.
+    /// Returns None if no such value is paired to the given key.
+    pub fn get(&self, k: String) -> Option<String> {
+        match self.store.get(&k) {
+            Some(k) => Some(k.to_string()),
+            None => None,
+        }
     }
 
-    /// Gets the string value of a given string key.
-    ///
-    /// Returns `None` if the given key does not exist.
-    pub fn get(&self, key: String) -> Option<String> {
-        self.map.get(&key).cloned()
+    /// Mutator for a KvStore's collection. Adds a value to the store and associates it with a key.
+    /// Breaks the lazy initialisation and dynamically invokes memory when invoked on an newly initialised but empty KvStore.
+    pub fn set(&mut self, k: String, v: String) {
+        self.store.insert(k, v);
     }
 
-    /// Remove a given key.
-    pub fn remove(&mut self, key: String) {
-        self.map.remove(&key);
+    /// Disassociates the underlying value of a given key. If not present, do nothing.
+    pub fn remove(&mut self, k: String) {
+        self.store.remove(&k);
     }
 }
