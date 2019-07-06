@@ -1,8 +1,10 @@
-#![deny(missing_docs)]
-//! A simple key/value store.
+#[deny(missing_docs)]
+extern crate failure;
+#[macro_use]
+extern crate failure_derive;
+extern crate serde;
+extern crate structopt;
 
-pub use error::{KvsError, Result};
-pub use kv::KvStore;
+pub use kv::{KvStore, Result};
 
-mod error;
 mod kv;
