@@ -1,5 +1,4 @@
 use kvs::*;
-use serde::{Deserialize, Serialize};
 use std::process;
 use structopt::StructOpt;
 
@@ -28,7 +27,7 @@ pub enum Command {
 }
 
 fn main() -> Result<()> {
-    let mut store = kvs::KvStore::new();
+    let mut store = kvs::KvStore::open("~/");
 
     match Cli::from_args().cmd {
         Command::Get { key } => match store.get(key) {
